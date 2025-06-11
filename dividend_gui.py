@@ -7,16 +7,14 @@ from datetime import datetime
 import plotly.graph_objects as go
 from tkinter import StringVar
 from tkinter.ttk import Notebook
-from tkhtmlview import HTMLLabel
-import plotly.io as pio
 from plotly.offline import plot
 import webview
 import tempfile
 from plotly.offline import plot
+import os
 
+CSV_FILENAME = os.path.join(os.path.expanduser("~"), "Documents", "dividend_history.csv")
 
-
-CSV_FILENAME = "dividend_history.csv"
 
 DIVIDEND_STOCKS = [
     {"ticker": "O", "name": "Realty Income", "yield": 0.055, "allocation": 0.20},
@@ -150,253 +148,223 @@ class DividendApp:
             messagebox.showerror("Invalid Input", "Please enter a valid dollar amount.")
 
     def save_csv(self):
-        if not self.data:
-            messagebox.showwarning("No Data", "Please calculate first before saving.")
-            return
-        df = pd.DataFrame(self.data)
-        file_exists = os.path.exists(CSV_FILENAME)
-        df.to_csv(CSV_FILENAME, mode='a', header=not file_exists, index=False)
-        messagebox.showinfo("Saved", f"Appended to {CSV_FILENAME}")
+        try:
+            if not self.data:
+                messagebox.showwarning("No Data", "Please calculate first before saving.")
+                return
+            df = pd.DataFrame(self.data)
+            file_exists = os.path.exists(CSV_FILENAME)
+            df.to_csv(CSV_FILENAME, mode='a', header=not file_exists, index=False)
+            messagebox.showinfo("Saved", f"Appended to {CSV_FILENAME}")
+        except Exception as e:
+            messagebox.showerror("Error", str(e))
 
     def show_growth_chart(self):
-        if not os.path.exists(CSV_FILENAME):
-            messagebox.showwarning("No History", f"No file named {CSV_FILENAME} found.")
-            return
+        try:
+            if not os.path.exists(CSV_FILENAME):
+                messagebox.showwarning("No History", f"No file named {CSV_FILENAME} found.")
+                return
 
-        df = pd.read_csv(CSV_FILENAME)
-        if not {"Timestamp", "Ticker", "Estimated Annual Dividend"}.issubset(df.columns):
-            messagebox.showerror("Data Error", "CSV missing necessary columns.")
-            return
+            df = pd.read_csv(CSV_FILENAME)
+            if not {"Timestamp", "Ticker", "Estimated Annual Dividend"}.issubset(df.columns):
+                messagebox.showerror("Data Error", "CSV missing necessary columns.")
+                return
 
-        df["Timestamp"] = pd.to_datetime(df["Timestamp"])
+            df["Timestamp"] = pd.to_datetime(df["Timestamp"])
 
-        # Group by timestamp and ticker to get stock-by-stock growth
-        grouped = df.groupby(["Timestamp", "Ticker"])["Estimated Annual Dividend"].sum().reset_index()
+            # Group by timestamp and ticker to get stock-by-stock growth
+            grouped = df.groupby(["Timestamp", "Ticker"])["Estimated Annual Dividend"].sum().reset_index()
 
-        # Pivot so we have columns for each stock's dividend over time
-        pivoted = grouped.pivot(index="Timestamp", columns="Ticker", values="Estimated Annual Dividend").fillna(0)
+            # Pivot so we have columns for each stock's dividend over time
+            pivoted = grouped.pivot(index="Timestamp", columns="Ticker", values="Estimated Annual Dividend").fillna(0)
 
-        # Calculate total
-        pivoted["Total"] = pivoted.sum(axis=1)
+            # Calculate total
+            pivoted["Total"] = pivoted.sum(axis=1)
 
-        # Create the plot
-        fig = go.Figure()
+            # Create the plot
+            fig = go.Figure()
 
-        # Add one line per ticker
-        for ticker in pivoted.columns[:-1]:  # Exclude "Total"
+            # Add one line per ticker
+            for ticker in pivoted.columns[:-1]:  # Exclude "Total"
+                fig.add_trace(go.Scatter(
+                    x=pivoted.index,
+                    y=pivoted[ticker],
+                    mode="lines+markers",
+                    name=f"{ticker} Dividend"
+                ))
+
+            # Add total line
             fig.add_trace(go.Scatter(
                 x=pivoted.index,
-                y=pivoted[ticker],
+                y=pivoted["Total"],
                 mode="lines+markers",
-                name=f"{ticker} Dividend"
+                name="Total Dividend",
+                line=dict(color="white", width=3, dash="dash")
             ))
 
-        # Add total line
-        fig.add_trace(go.Scatter(
-            x=pivoted.index,
-            y=pivoted["Total"],
-            mode="lines+markers",
-            name="Total Dividend",
-            line=dict(color="white", width=3, dash="dash")
-        ))
+            fig.update_layout(
+                title="📈 Individual Stock & Total Dividend Growth",
+                xaxis_title="Date",
+                yaxis_title="Annual Dividend ($)",
+                legend=dict(x=0.01, y=0.99),
+                template="plotly_dark"
+            )
 
-        fig.update_layout(
-            title="📈 Individual Stock & Total Dividend Growth",
-            xaxis_title="Date",
-            yaxis_title="Annual Dividend ($)",
-            legend=dict(x=0.01, y=0.99),
-            template="plotly_dark"
-        )
+            fig.show()
+        except Exception as e:
+            messagebox.showerror("Error", str(e))
 
-        fig.show()
-
-
-    # def show_comparison_chart(self):
-        years = [1, 2, 3, 4, 5, 10]
-        portfolio_22k = [22500, 47500, 71700, 98600, 127270, 300800]
-        portfolio_30k = [30600, 64300, 99600, 136800, 177800, 429700]
-
-        if os.path.exists(CSV_FILENAME):
-            df = pd.read_csv(CSV_FILENAME)
-            df["Timestamp"] = pd.to_datetime(df["Timestamp"])
-            actual_invest = df.groupby("Timestamp")["Total Investment"].sum().reset_index()
-            actual_invest["Year"] = actual_invest.index + 1
-        else:
-            actual_invest = pd.DataFrame({"Year": [], "Total Investment": []})
-
-        fig = go.Figure()
-
-        # Projected Portfolio Lines
-        fig.add_trace(go.Scatter(
-            x=years, y=portfolio_22k,
-            name="Portfolio (22K/yr)",
-            mode="lines+markers",
-            yaxis="y2"
-        ))
-        fig.add_trace(go.Scatter(
-            x=years, y=portfolio_30k,
-            name="Portfolio (30K/yr)",
-            mode="lines+markers",
-            yaxis="y2"
-        ))
-
-        # Actual Portfolio Line
-        if not actual_invest.empty:
-            fig.add_trace(go.Scatter(
-                x=actual_invest["Year"],
-                y=actual_invest["Total Investment"],
-                name="Actual Portfolio Value",
-                mode="lines+markers",
-                yaxis="y2"
-            ))
-
-        fig.update_layout(
-            title="📊 Strategy Comparison: Portfolio Value Only",
-            xaxis_title="Year",
-            yaxis=dict(title="(unused)", visible=False),  # no primary Y axis
-            yaxis2=dict(title="Portfolio Value ($)", overlaying="y", side="right"),
-            legend=dict(x=0.01, y=0.99),
-            template="plotly_dark"
-        )
-
-        fig.show()
     def show_comparison_chart(self):
-        years = [1, 2, 3, 4, 5, 10]
-        portfolio_22k = [22500, 47500, 71700, 98600, 127270, 300800]
-        portfolio_30k = [30600, 64300, 99600, 136800, 177800, 429700]
+        try:
+            if not os.path.exists(CSV_FILENAME):
+                messagebox.showwarning("No History", f"No file named {CSV_FILENAME} found.")
+                return
 
-        if os.path.exists(CSV_FILENAME):
             df = pd.read_csv(CSV_FILENAME)
+            if not {"Timestamp", "Amount Invested"}.issubset(df.columns):
+                messagebox.showerror("Data Error", "CSV missing required columns.")
+                return
+
             df["Timestamp"] = pd.to_datetime(df["Timestamp"])
-            actual_invest = df.groupby("Timestamp")["Total Investment"].sum().reset_index()
-            actual_invest["Year"] = actual_invest.index + 1
-        else:
-            actual_invest = pd.DataFrame({"Year": [], "Total Investment": []})
+            df["Year"] = df["Timestamp"].dt.year
 
-        fig = go.Figure()
+            # ✅ Group by year, summing the *actual* individual amounts invested
+            actual_invest = df.groupby("Year")["Amount Invested"].sum().reset_index()
 
-        # Projected Portfolio Lines
-        fig.add_trace(go.Scatter(
-            x=years, y=portfolio_22k,
-            name="Portfolio (22K/yr)",
-            mode="lines+markers",
-            yaxis="y2"
-        ))
-        fig.add_trace(go.Scatter(
-            x=years, y=portfolio_30k,
-            name="Portfolio (30K/yr)",
-            mode="lines+markers",
-            yaxis="y2"
-        ))
+            # Strategy data
+            strategy_years = list(range(1, 11))
+            portfolio_22k = [22500, 47500, 71700, 98600, 127270, 157400, 192800, 228400, 264200, 300800]
+            portfolio_30k = [30600, 64300, 99600, 136800, 177800, 221400, 267600, 315600, 365400, 429700]
 
-        # Actual Portfolio Line
-        if not actual_invest.empty:
+            fig = go.Figure()
+
+            # Strategy lines
             fig.add_trace(go.Scatter(
-                x=actual_invest["Year"],
-                y=actual_invest["Total Investment"],
+                x=strategy_years, y=portfolio_22k,
+                name="Portfolio (22K/yr)", mode="lines+markers", yaxis="y2"
+            ))
+            fig.add_trace(go.Scatter(
+                x=strategy_years, y=portfolio_30k,
+                name="Portfolio (30K/yr)", mode="lines+markers", yaxis="y2"
+            ))
+
+            # Normalize actual data to match year index (e.g. first year is 1)
+            actual_years = actual_invest["Year"] - actual_invest["Year"].min() + 1
+            fig.add_trace(go.Scatter(
+                x=actual_years,
+                y=actual_invest["Amount Invested"],
                 name="Actual Portfolio Value",
                 mode="lines+markers",
                 yaxis="y2"
             ))
 
-        fig.update_layout(
-            title="📊 Strategy Comparison: Portfolio Value Only",
-            xaxis_title="Year",
-            yaxis=dict(title="(unused)", visible=False),  # no primary Y axis
-            yaxis2=dict(title="Portfolio Value ($)", overlaying="y", side="right"),
-            legend=dict(x=0.01, y=0.99),
-            template="plotly_dark"
-        )
+            fig.update_layout(
+                title="📊 Strategy Comparison: Portfolio Value Only",
+                xaxis_title="Year (Relative)",
+                yaxis=dict(title="(unused)", visible=False),
+                yaxis2=dict(title="Portfolio Value ($)", overlaying="y", side="right"),
+                legend=dict(x=0.01, y=0.99),
+                template="plotly_dark"
+            )
 
-        # Embed the chart using a temporary HTML and webview
-        html_path = tempfile.NamedTemporaryFile(delete=False, suffix=".html")
-        plot(fig, filename=html_path.name, auto_open=False, include_plotlyjs='cdn')
-        webview.create_window("Strategy Comparison", html_path.name, width=900, height=600)
-        webview.start()
+            # Show it via embedded window
+            html_path = tempfile.NamedTemporaryFile(delete=False, suffix=".html")
+            plot(fig, filename=html_path.name, auto_open=False, include_plotlyjs='cdn')
+            webview.create_window("Strategy Comparison", html_path.name, width=900, height=600)
+            webview.start()
+
+        except Exception as e:
+            messagebox.showerror("Error", str(e))
+
 
 
     def open_plot_in_window(self, fig, title="Chart"):
+        try:
             # Create a temp HTML file
             html_path = tempfile.NamedTemporaryFile(delete=False, suffix=".html")
             plot(fig, filename=html_path.name, auto_open=False, include_plotlyjs='cdn')
             # Open in embedded window
             webview.create_window(title, html_path.name, width=800, height=600)
             webview.start()
+        except Exception as e:
+            messagebox.showerror("Error", str(e))
 
     def generate_growth_tabs(self):
-        if not os.path.exists(CSV_FILENAME):
-            messagebox.showwarning("No History", "No dividend_history.csv found.")
-            return
+        try:
+            if not os.path.exists(CSV_FILENAME):
+                messagebox.showwarning("No History", "No dividend_history.csv found.")
+                return
 
-        df = pd.read_csv(CSV_FILENAME)
-        if not {"Timestamp", "Ticker", "Estimated Annual Dividend", "Monthly Dividend"}.issubset(df.columns):
-            messagebox.showerror("Data Error", "CSV missing required columns.")
-            return
+            df = pd.read_csv(CSV_FILENAME)
+            if not {"Timestamp", "Ticker", "Estimated Annual Dividend", "Monthly Dividend"}.issubset(df.columns):
+                messagebox.showerror("Data Error", "CSV missing required columns.")
+                return
 
-        df["Timestamp"] = pd.to_datetime(df["Timestamp"])
-        mode = self.view_mode.get()
-        y_col = "Estimated Annual Dividend" if mode == "Annual" else "Monthly Dividend"
-        y_label = f"{mode} Dividend ($)"
+            df["Timestamp"] = pd.to_datetime(df["Timestamp"])
+            mode = self.view_mode.get()
+            y_col = "Estimated Annual Dividend" if mode == "Annual" else "Monthly Dividend"
+            y_label = f"{mode} Dividend ($)"
 
-        # Clear old tabs
-        for tab_id in self.stock_tabs.tabs():
-            self.stock_tabs.forget(self.stock_tabs.nametowidget(tab_id))
+            # Clear old tabs
+            for tab_id in self.stock_tabs.tabs():
+                self.stock_tabs.forget(self.stock_tabs.nametowidget(tab_id))
 
-        # Prepare data
-        grouped = df.groupby(["Timestamp", "Ticker"])[y_col].sum().reset_index()
-        pivoted = grouped.pivot(index="Timestamp", columns="Ticker", values=y_col).fillna(0)
-        pivoted["Total"] = pivoted.sum(axis=1)
+            # Prepare data
+            grouped = df.groupby(["Timestamp", "Ticker"])[y_col].sum().reset_index()
+            pivoted = grouped.pivot(index="Timestamp", columns="Ticker", values=y_col).fillna(0)
+            pivoted["Total"] = pivoted.sum(axis=1)
 
-        # Total + All Stocks Tab
-        tab_total = ttk.Frame(self.stock_tabs)
-        self.stock_tabs.add(tab_total, text="📊 All Stocks + Total")
+            # Total + All Stocks Tab
+            tab_total = ttk.Frame(self.stock_tabs)
+            self.stock_tabs.add(tab_total, text="📊 All Stocks + Total")
 
-        fig_total = go.Figure()
-        for ticker in pivoted.columns[:-1]:  # skip Total
+            fig_total = go.Figure()
+            for ticker in pivoted.columns[:-1]:  # skip Total
+                fig_total.add_trace(go.Scatter(
+                    x=pivoted.index,
+                    y=pivoted[ticker],
+                    mode="lines+markers",
+                    name=f"{ticker}"
+                ))
             fig_total.add_trace(go.Scatter(
                 x=pivoted.index,
-                y=pivoted[ticker],
+                y=pivoted["Total"],
                 mode="lines+markers",
-                name=f"{ticker}"
+                name="Total",
+                line=dict(color="white", width=3, dash="dash")
             ))
-        fig_total.add_trace(go.Scatter(
-            x=pivoted.index,
-            y=pivoted["Total"],
-            mode="lines+markers",
-            name="Total",
-            line=dict(color="white", width=3, dash="dash")
-        ))
 
-        fig_total.update_layout(
-            title=f"{mode} Dividend Growth Over Time",
-            xaxis_title="Date",
-            yaxis_title=y_label,
-            template="plotly_dark"
-        )
-
-        ttk.Button(tab_total, text="Open Interactive Chart", command=lambda: self.open_plot_in_window(fig_total)).pack(pady=10)
-
-        # Per-Stock Tabs
-        for ticker in pivoted.columns[:-1]:
-            tab = ttk.Frame(self.stock_tabs)
-            self.stock_tabs.add(tab, text=ticker)
-
-            fig = go.Figure()
-            fig.add_trace(go.Scatter(
-                x=pivoted.index,
-                y=pivoted[ticker],
-                mode="lines+markers",
-                name=ticker
-            ))
-            fig.update_layout(
-                title=f"{ticker} - {mode} Dividend Growth",
+            fig_total.update_layout(
+                title=f"{mode} Dividend Growth Over Time",
                 xaxis_title="Date",
                 yaxis_title=y_label,
                 template="plotly_dark"
             )
 
-            ttk.Button(tab, text="Open Interactive Chart", command=lambda f=fig: self.open_plot_in_window(f)).pack(pady=10)
+            ttk.Button(tab_total, text="Open Interactive Chart", command=lambda: self.open_plot_in_window(fig_total)).pack(pady=10)
 
+            # Per-Stock Tabs
+            for ticker in pivoted.columns[:-1]:
+                tab = ttk.Frame(self.stock_tabs)
+                self.stock_tabs.add(tab, text=ticker)
+
+                fig = go.Figure()
+                fig.add_trace(go.Scatter(
+                    x=pivoted.index,
+                    y=pivoted[ticker],
+                    mode="lines+markers",
+                    name=ticker
+                ))
+                fig.update_layout(
+                    title=f"{ticker} - {mode} Dividend Growth",
+                    xaxis_title="Date",
+                    yaxis_title=y_label,
+                    template="plotly_dark"
+                )
+
+                ttk.Button(tab, text="Open Interactive Chart", command=lambda f=fig: self.open_plot_in_window(f)).pack(pady=10)
+        except Exception as e:
+            messagebox.showerror("Error", str(e))
 
 if __name__ == "__main__":
     root = tk.Tk()

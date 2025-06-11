@@ -1,2 +1,7 @@
 /dividend_history.csv
 venv/
+/build
+/dividend_history
+/dividend_gui.spec
+/icon.ico
+/dist
