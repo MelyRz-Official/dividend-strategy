@@ -1,0 +1,283 @@
+# -*- coding: utf-8 -*-
+"""
+Chart generation using Plotly for various portfolio visualizations
+"""
+
+import pandas as pd
+import plotly.graph_objects as go
+from typing import Dict
+from market_data import MarketDataProvider
+
+
+class ChartGenerator:
+    """Enhanced chart generation with market data"""
+    
+    @staticmethod
+    def create_growth_chart(pivoted_cumsum: pd.DataFrame, mode: str, y_label: str) -> go.Figure:
+        """Create growth chart with optimized trace creation"""
+        fig = go.Figure()
+        
+        # Add stock traces
+        for ticker in pivoted_cumsum.columns[:-1]:  # skip Total
+            fig.add_trace(go.Scatter(
+                x=pivoted_cumsum.index,
+                y=pivoted_cumsum[ticker],
+                mode="lines+markers",
+                name=ticker,
+                hovertemplate=f"{ticker}: %{{y:.2f}}<extra></extra>"
+            ))
+        
+        # Add total line with dashed white line
+        fig.add_trace(go.Scatter(
+            x=pivoted_cumsum.index,
+            y=pivoted_cumsum["Total"],
+            mode="lines+markers",
+            name="Total",
+            line=dict(color="white", width=3, dash="dash"),
+            hovertemplate="Total: %{y:.2f}<extra></extra>"
+        ))
+
+        fig.update_layout(
+            title=f"Cumulative {mode} Dividend Growth Over Time",
+            xaxis_title="Date",
+            yaxis_title=f"Cumulative {y_label}",
+            template="plotly_dark",
+            hovermode="x unified"
+        )
+        
+        return fig
+    
+    @staticmethod
+    def create_individual_chart(pivoted_cumsum: pd.DataFrame, ticker: str, mode: str, y_label: str) -> go.Figure:
+        """Create individual stock chart"""
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(
+            x=pivoted_cumsum.index,
+            y=pivoted_cumsum[ticker],
+            mode="lines+markers",
+            name=ticker,
+            hovertemplate=f"{ticker}: %{{y:.2f}}<extra></extra>"
+        ))
+        
+        fig.update_layout(
+            title=f"{ticker} - Cumulative {mode} Dividend Growth",
+            xaxis_title="Date",
+            yaxis_title=f"Cumulative {y_label}",
+            template="plotly_dark"
+        )
+        
+        return fig
+    
+    @staticmethod
+    def create_allocation_pie_chart(stats: Dict) -> go.Figure:
+        """Create portfolio allocation pie chart"""
+        # Import here to avoid circular imports
+        try:
+            import config
+            dividend_stocks = config.DIVIDEND_STOCKS
+        except ImportError:
+            # Fallback if config not available
+            dividend_stocks = [
+                {"ticker": "O", "allocation": 0.20},
+                {"ticker": "TROW", "allocation": 0.15},
+                {"ticker": "SCHD", "allocation": 0.15},
+                {"ticker": "HDV", "allocation": 0.10},
+                {"ticker": "MO", "allocation": 0.10},
+                {"ticker": "APLE", "allocation": 0.10},
+                {"ticker": "ABBV", "allocation": 0.10},
+                {"ticker": "VZ", "allocation": 0.10},
+            ]
+        
+        fig = go.Figure()
+        
+        # Get allocation data
+        labels = [stock["ticker"] for stock in dividend_stocks]
+        values = [stock["allocation"] * 100 for stock in dividend_stocks]
+        
+        fig.add_trace(go.Pie(
+            labels=labels,
+            values=values,
+            hovertemplate="<b>%{label}</b><br>Allocation: %{value:.1f}%<extra></extra>",
+            textinfo='label+percent',
+            textposition='inside'
+        ))
+        
+        fig.update_layout(
+            title="Portfolio Allocation by Stock",
+            template="plotly_dark",
+            showlegend=True
+        )
+        
+        return fig
+    
+    @staticmethod
+    def create_yield_comparison_chart(market_provider) -> go.Figure:
+        """Create yield comparison bar chart with live data"""
+        # Import here to avoid circular imports
+        try:
+            import config
+            dividend_stocks = config.DIVIDEND_STOCKS
+        except ImportError:
+            # Fallback if config not available
+            dividend_stocks = [
+                {"ticker": "O", "yield": 0.055},
+                {"ticker": "TROW", "yield": 0.043},
+                {"ticker": "SCHD", "yield": 0.038},
+                {"ticker": "HDV", "yield": 0.038},
+                {"ticker": "MO", "yield": 0.08},
+                {"ticker": "APLE", "yield": 0.06},
+                {"ticker": "ABBV", "yield": 0.04},
+                {"ticker": "VZ", "yield": 0.066},
+            ]
+        
+        fig = go.Figure()
+        
+        tickers = []
+        static_yields = []
+        live_yields = []
+        
+        for stock in dividend_stocks:
+            tickers.append(stock["ticker"])
+            static_yields.append(stock["yield"] * 100)
+            
+            # Try to get live yield - with better error handling for Yahoo Finance
+            try:
+                dividend_data = market_provider.get_dividend_data(stock["ticker"])
+                if dividend_data and dividend_data.get('dividend_yield', 0) > 0:
+                    live_yields.append(dividend_data['dividend_yield'] * 100)
+                    print(f"✅ Live yield for {stock['ticker']}: {dividend_data['dividend_yield']*100:.2f}%")
+                else:
+                    print(f"⚠️ No live yield for {stock['ticker']}, using static")
+                    live_yields.append(stock["yield"] * 100)  # Fallback to static
+            except Exception as e:
+                print(f"❌ Error getting live yield for {stock['ticker']}: {e}")
+                live_yields.append(stock["yield"] * 100)  # Fallback to static
+        
+        # Static yields
+        fig.add_trace(go.Bar(
+            x=tickers,
+            y=static_yields,
+            name="Static Yields",
+            text=[f"{y:.1f}%" for y in static_yields],
+            textposition='auto',
+            hovertemplate="<b>%{x}</b><br>Static Yield: %{y:.2f}%<extra></extra>",
+            marker=dict(color='lightblue', opacity=0.7)
+        ))
+        
+        # Live yields
+        fig.add_trace(go.Bar(
+            x=tickers,
+            y=live_yields,
+            name="Live Yields",
+            text=[f"{y:.1f}%" for y in live_yields],
+            textposition='auto',
+            hovertemplate="<b>%{x}</b><br>Live Yield: %{y:.2f}%<extra></extra>",
+            marker=dict(color='orange')
+        ))
+        
+        fig.update_layout(
+            title="Dividend Yield Comparison: Static vs Live Data",
+            xaxis_title="Stock Ticker",
+            yaxis_title="Dividend Yield (%)",
+            template="plotly_dark",
+            barmode='group'
+        )
+        
+        return fig
+    
+    @staticmethod
+    def create_investment_timeline(df: pd.DataFrame) -> go.Figure:
+        """Create investment timeline chart"""
+        if df.empty:
+            return go.Figure()
+            
+        df["Timestamp"] = pd.to_datetime(df["Timestamp"])
+        timeline_data = df.groupby("Timestamp")["Total Investment"].first().reset_index()
+        timeline_data["Cumulative"] = timeline_data["Total Investment"].cumsum()
+        
+        fig = go.Figure()
+        
+        # Individual investments
+        fig.add_trace(go.Scatter(
+            x=timeline_data["Timestamp"],
+            y=timeline_data["Total Investment"],
+            mode="markers",
+            name="Individual Investments",
+            marker=dict(size=10, color="lightblue"),
+            hovertemplate="<b>Investment</b><br>Date: %{x}<br>Amount: $%{y:.2f}<extra></extra>"
+        ))
+        
+        # Cumulative line
+        fig.add_trace(go.Scatter(
+            x=timeline_data["Timestamp"],
+            y=timeline_data["Cumulative"],
+            mode="lines+markers",
+            name="Cumulative Investment",
+            line=dict(color="orange", width=3),
+            hovertemplate="<b>Total Invested</b><br>Date: %{x}<br>Amount: $%{y:.2f}<extra></extra>"
+        ))
+        
+        fig.update_layout(
+            title="Investment Timeline",
+            xaxis_title="Date",
+            yaxis_title="Investment Amount ($)",
+            template="plotly_dark",
+            hovermode="x unified"
+        )
+        
+        return fig
+
+    @staticmethod
+    def create_portfolio_performance_chart(market_data: Dict) -> go.Figure:
+        """Create portfolio performance chart showing gains/losses"""
+        if not market_data.get("stocks"):
+            return go.Figure()
+        
+        stocks = market_data["stocks"]
+        tickers = [stock["ticker"] for stock in stocks]
+        invested_amounts = [stock["invested"] for stock in stocks]
+        current_values = [stock["current_value"] for stock in stocks]
+        gains_losses = [stock["gain_loss"] for stock in stocks]
+        
+        fig = go.Figure()
+        
+        # Invested amounts
+        fig.add_trace(go.Bar(
+            x=tickers,
+            y=invested_amounts,
+            name="Amount Invested",
+            marker=dict(color='lightblue'),
+            hovertemplate="<b>%{x}</b><br>Invested: $%{y:.2f}<extra></extra>"
+        ))
+        
+        # Current values
+        fig.add_trace(go.Bar(
+            x=tickers,
+            y=current_values,
+            name="Current Value",
+            marker=dict(color='orange'),
+            hovertemplate="<b>%{x}</b><br>Current Value: $%{y:.2f}<extra></extra>"
+        ))
+        
+        # Gains/Losses as line
+        fig.add_trace(go.Scatter(
+            x=tickers,
+            y=gains_losses,
+            mode="lines+markers",
+            name="Gain/Loss",
+            line=dict(color='white', width=3),
+            marker=dict(size=8),
+            yaxis="y2",
+            hovertemplate="<b>%{x}</b><br>Gain/Loss: $%{y:.2f}<extra></extra>"
+        ))
+        
+        fig.update_layout(
+            title="Portfolio Performance: Invested vs Current Value",
+            xaxis_title="Stock Ticker",
+            yaxis_title="Amount ($)",
+            yaxis2=dict(title="Gain/Loss ($)", overlaying="y", side="right"),
+            template="plotly_dark",
+            barmode='group'
+        )
+        
+        return fig

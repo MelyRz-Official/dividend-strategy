@@ -63,3 +63,98 @@ exe_generator.txt
 quick_fix.py
 build_executable.py
 requirements.txt
+
+# 🔒 SECURITY - Never commit these files!
+config.py                    # Contains API keys
+*.json                      # Portfolio and personal data
+*.csv                       # Investment history
+
+# 📊 Data Files - Personal Information
+dividend_history.csv
+portfolio_data.json
+portfolio_holdings.json
+portfolio_transactions.json
+market_data_cache.json
+market_data_export.csv
+
+# 🔑 API Keys and Secrets
+.env
+.env.local
+.env.production
+secrets.py
+api_keys.py
+
+# 🐍 Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# 💻 IDE and Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# 🗂️ Virtual Environments
+venv/
+env/
+ENV/
+.venv/
+.env/
+
+# 📦 Build and Distribution
+build_executable.py
+*.spec
+dist/
+
+# 📋 Logs and Debugging
+*.log
+debug.log
+error.log
+
+# 🔧 OS and System Files
+.DS_Store
+Thumbs.db
+*.tmp
+*.temp
+
+# 📈 Backup Files
+*_backup.*
+backup_*
+*.bak
+
+# 🧪 Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.cache
+
+# 📝 Documentation Build
+docs/_build/
+
+# 🎯 Jupyter Notebooks (if any)
+.ipynb_checkpoints

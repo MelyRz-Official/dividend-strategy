@@ -1,134 +1,268 @@
 # 💸 Real-Time Dividend Strategy Calculator
 
-A comprehensive dividend investment tracking platform with live market data integration.
+A comprehensive dividend investment tracking platform with unlimited live market data integration via Yahoo Finance.
 
 ## 🚀 Features
 
-- **Real-time dividend calculations** with live market data
-- **Portfolio performance tracking** with gains/losses analysis
-- **Professional-grade analytics** and visualizations
-- **Market data dashboard** for dividend stocks
-- **Export capabilities** for further analysis
-- **Strategy comparison** tools
+- **🔥 Unlimited real-time data** - No API limits with Yahoo Finance integration
+- **📈 Portfolio performance tracking** with precise gains/losses analysis  
+- **💼 Professional transaction tracking** with detailed share-level accounting
+- **📊 Interactive visualizations** with Plotly charts
+- **🎯 Strategy comparison tools** against benchmarks
+- **📋 CSV export capabilities** for advanced analysis
+- **🌙 Modern dark theme UI** with professional styling
 
-## 📋 Installation
+## 📋 Quick Start
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/yourusername/dividend-calculator.git
-   cd dividend-calculator
-   ```
+1. **Install Python 3.8+** if not already installed
 
 2. **Install dependencies**
    ```bash
-   pip install pandas plotly pywebview sv-ttk requests
+   pip install yfinance pandas plotly sv-ttk pywebview
    ```
 
-3. **Setup API configuration**
-   ```bash
-   # Copy the example config file
-   cp config.example.py config.py
-   ```
-
-4. **Get your free API key**
-   - Visit [Alpha Vantage](https://www.alphavantage.co/support/#api-key)
-   - Sign up for a free account (500 API calls/day)
-   - Copy your API key
-
-5. **Configure your API key**
-   - Open `config.py` in a text editor
-   - Replace `"your_api_key_here"` with your actual API key
-   - Save the file
-
-## 🔑 API Key Setup
-
-### Method 1: Config File (Recommended)
-Edit `config.py`:
-```python
-ALPHA_VANTAGE_API_KEY = "YOUR_ACTUAL_API_KEY_HERE"
-```
-
-### Method 2: Environment Variable
-Set environment variable:
-```bash
-# Windows
-set ALPHA_VANTAGE_API_KEY=your_api_key_here
-
-# macOS/Linux
-export ALPHA_VANTAGE_API_KEY=your_api_key_here
-```
-
-## 🖥️ Usage
-
-1. **Run the application**
+3. **Run the application**
    ```bash
    python dividend_gui.py
    ```
 
-2. **Enable live data**
-   - Check "Use Live Market Data" in the app
-   - Enter your API key if prompted
+4. **Enable live data**
+   - Check "Use Live Market Data" ✅
+   - No API key required - unlimited requests!
 
-3. **Calculate dividends**
+5. **Start calculating**
    - Enter investment amount
-   - Click "Calculate" to see projections with live data
+   - Get real-time dividend projections instantly
 
-## 📦 Building Desktop App
+## 🆕 What's New in V2.0
 
-Create a standalone executable:
-```bash
-pyinstaller --onefile --windowed --name="DividendTracker" dividend_app.py
+### 🎉 Major Improvements
+- **✅ Yahoo Finance Integration** - No more API key headaches!
+- **✅ Unlimited Data Requests** - No rate limiting
+- **✅ Better Performance** - Faster data fetching
+- **✅ Enhanced Portfolio Tracking** - Transaction-level detail
+- **✅ Improved Error Handling** - More reliable operation
+
+### 🏗️ Architecture
+The application is now modular with clean separation:
+- `dividend_gui.py` - Main application interface
+- `yahoo_finance_provider.py` - Market data integration
+- `portfolio_manager.py` - Transaction and holdings management
+- `chart_generator.py` - Interactive visualizations
+- `data_processor.py` - Calculations and analytics
+- `utils.py` - Helper functions
+
+## 📦 File Structure
+
+```
+dividend-calculator/
+├── dividend_gui.py           # 🖥️ Main application
+├── yahoo_finance_provider.py # 📡 Market data (Yahoo Finance)
+├── portfolio_manager.py      # 💼 Portfolio tracking
+├── chart_generator.py        # 📊 Plotly visualizations
+├── data_processor.py         # 🧮 Calculations & analytics
+├── utils.py                  # 🔧 Utility functions
+├── config.py                 # ⚙️ Configuration settings
+├── requirements.txt          # 📋 Dependencies
+└── README.md                 # 📖 This file
 ```
 
-## 🔒 Security Notes
+## 🔧 Configuration
 
-- **Never commit `config.py`** - it contains your API keys
-- The `.gitignore` file prevents accidental commits
-- Use environment variables in production environments
-- Rotate API keys regularly for security
+### Default Portfolio Allocation
+Edit `config.py` to customize your dividend stock allocation:
 
-## 📊 Features Overview
+```python
+DIVIDEND_STOCKS = (
+    {"ticker": "O", "name": "Realty Income", "yield": 0.055, "allocation": 0.20},
+    {"ticker": "SCHD", "name": "Schwab US Dividend", "yield": 0.038, "allocation": 0.15},
+    # Add your preferred dividend stocks...
+)
+```
 
-### Real-Time Data
-- Live stock prices and dividend yields
-- Current market values and gains/losses
-- Ex-dividend date tracking
+### Cache Settings
+```python
+CACHE_DURATION_HOURS = 1  # How long to cache market data
+```
 
-### Analytics
-- Portfolio allocation pie charts
-- Yield comparison (static vs live)
-- Investment timeline tracking
-- Performance vs strategy benchmarks
+## 📊 Features Deep Dive
 
-### Export & Analysis
-- CSV export functionality
-- Historical data tracking
-- Professional-grade visualizations
+### 💰 Investment Calculator
+- Real-time dividend yield calculations
+- Allocation across dividend-focused portfolio
+- Monthly and annual income projections
+- Live vs. static yield comparisons
+
+### 📈 Portfolio Analytics
+- **Allocation Charts** - Visual portfolio breakdown
+- **Yield Comparison** - Static configuration vs. live market data
+- **Performance Tracking** - Gains/losses with percentage returns
+- **Investment Timeline** - Historical investment patterns
+
+### 🔄 Data Management
+- **Automatic CSV Export** - Investment history tracking
+- **Portfolio Persistence** - JSON-based transaction storage
+- **Market Data Caching** - Optimized performance
+- **Backup Functionality** - Data protection
+
+### 📱 User Experience
+- **Dark Theme** - Professional appearance
+- **Progress Indicators** - For long operations
+- **Error Handling** - Graceful degradation
+- **Responsive Design** - Clean, organized layout
+
+## 🎯 Default Stock Portfolio
+
+| Ticker | Company | Allocation | Target Yield |
+|--------|---------|------------|--------------|
+| **O** | Realty Income | 20% | 5.5% |
+| **TROW** | T. Rowe Price | 15% | 4.3% |
+| **SCHD** | Schwab US Dividend ETF | 15% | 3.8% |
+| **HDV** | iShares Core High Dividend | 10% | 3.8% |
+| **MO** | Altria Group | 10% | 8.0% |
+| **APLE** | Apple Hospitality REIT | 10% | 6.0% |
+| **ABBV** | AbbVie | 10% | 4.0% |
+| **VZ** | Verizon Communications | 10% | 6.6% |
+
+*Customize in `config.py` - allocations must sum to 100%*
+
+## 🚀 Advanced Usage
+
+### Building Standalone App
+```bash
+# Install PyInstaller
+pip install pyinstaller
+
+# Create executable
+pyinstaller --onefile --windowed --name="DividendTracker" dividend_gui.py
+```
+
+### Batch Processing
+```bash
+# Run calculations for multiple amounts
+python -c "
+from dividend_gui import DividendApp
+import tkinter as tk
+# Automated testing/batch processing
+"
+```
+
+### Data Export
+- **Portfolio Export**: JSON format with transaction details
+- **Market Data Export**: CSV with current prices and yields
+- **Historical Analysis**: CSV export of all calculations
 
 ## 🆘 Troubleshooting
 
-### API Issues
-- Verify your API key is correct in `config.py`
-- Check rate limits (5 calls/minute for free tier)
-- Demo key only works with AAPL stock
+### Common Issues
 
-### Installation Issues
-- Ensure Python 3.8+ is installed
-- Use virtual environment for clean setup
-- Install Visual C++ Build Tools if needed on Windows
+**"ModuleNotFoundError: No module named 'yfinance'"**
+```bash
+pip install yfinance
+```
 
-## 📄 License
+**Charts not displaying**
+```bash
+pip install pywebview  # For embedded charts
+# Or charts will fallback to browser automatically
+```
 
-MIT License - feel free to use and modify for your investment needs!
+**Slow performance**
+- Disable live data for faster calculations
+- Increase cache duration in `config.py`
+- Check internet connection
+
+**Data not updating**
+- Clear cache files in Documents folder
+- Restart application
+- Verify internet connectivity
+
+### Debug Mode
+Add debug output by running:
+```bash
+python dividend_gui.py --debug
+```
+
+## 🔄 Migration from V1.x
+
+If upgrading from Alpha Vantage version:
+
+1. **Backup your data**
+   ```bash
+   cp dividend_history.csv dividend_history_backup.csv
+   cp portfolio_data.json portfolio_data_backup.json
+   ```
+
+2. **Install new dependencies**
+   ```bash
+   pip install yfinance
+   ```
+
+3. **Remove Alpha Vantage config** (optional)
+   - Remove `ALPHA_VANTAGE_API_KEY` from `config.py`
+
+4. **Run application** - automatic compatibility mode
 
 ## 🤝 Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+### Development Setup
+```bash
+# Clone repository
+git clone https://github.com/yourusername/dividend-calculator.git
+cd dividend-calculator
+
+# Install development dependencies
+pip install -r requirements.txt
+pip install black flake8 pytest
+
+# Run tests
+python -m pytest tests/
+
+# Format code
+black *.py
+```
+
+### Feature Requests
+- 🌟 Star the repository
+- 📝 Open an issue with feature description
+- 🔧 Submit pull requests
+
+## 📊 Roadmap
+
+### Upcoming Features
+- [ ] **Multi-currency support** for international dividends
+- [ ] **Tax optimization** calculations
+- [ ] **DRIP modeling** (Dividend Reinvestment Plans)
+- [ ] **Sector analysis** and diversification metrics
+- [ ] **Mobile app** development
+- [ ] **Cloud sync** for multi-device access
+
+## 🏆 Acknowledgments
+
+- **Yahoo Finance** for providing free market data
+- **Plotly** for beautiful interactive charts
+- **tkinter & sv-ttk** for the user interface
+- **Community contributors** for feedback and improvements
+
+## 📄 License
+
+MIT License - Open source for educational and personal use.
+
+## ⚠️ Important Disclaimers
+
+- **Educational Purpose**: This tool is for learning and analysis only
+- **Not Financial Advice**: Always consult with qualified financial advisors
+- **Market Risk**: Past performance doesn't guarantee future results
+- **Data Accuracy**: While we strive for accuracy, verify important data independently
+- **Tax Implications**: Consult tax professionals for investment tax strategies
 
 ---
 
-**⚠️ Disclaimer:** This tool is for educational purposes. Always consult with financial advisors for investment decisions.
+## 🌟 Love the project? 
+
+⭐ **Star this repository** to show your support!  
+🐛 **Found a bug?** Open an issue  
+💡 **Have an idea?** Submit a feature request  
+🤝 **Want to contribute?** Fork and create a pull request  
+
+**Happy dividend investing! 💰📈**

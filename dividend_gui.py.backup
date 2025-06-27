@@ -115,7 +115,7 @@
 #     def _setup_left_panel(self, parent):
 #         """Setup enhanced left panel with market data controls"""
 #         # Market Data Status section
-#         status_frame = ttk.LabelFrame(parent, text="[LAUNCH] Market Data Status", padding=10)
+#         status_frame = ttk.LabelFrame(parent, text="🚀 Market Data Status", padding=10)
 #         status_frame.pack(pady=(0, 10), fill="x")
         
 #         # Status indicator
@@ -131,7 +131,7 @@
 #                        command=self.on_live_data_toggle).pack(side="left")
 
 #         # Input section
-#         input_frame = ttk.LabelFrame(parent, text="[MONEY] Investment Calculator", padding=10)
+#         input_frame = ttk.LabelFrame(parent, text="💰 Investment Calculator", padding=10)
 #         input_frame.pack(pady=(0, 10), fill="x")
         
 #         entry_frame = ttk.Frame(input_frame)
@@ -144,7 +144,7 @@
 #         ttk.Button(entry_frame, text="Calculate", command=self.calculate).pack(side="left", padx=5)
         
 #         # Portfolio stats section (enhanced)
-#         stats_frame = ttk.LabelFrame(parent, text="[DATA] Portfolio Statistics", padding=10)
+#         stats_frame = ttk.LabelFrame(parent, text="📊 Portfolio Statistics", padding=10)
 #         stats_frame.pack(pady=(0, 10), fill="x")
         
 #         self.stats_labels = {}
@@ -166,7 +166,7 @@
 #             self.stats_labels[key].pack(side="right")
 
 #         # Current calculation results
-#         calc_frame = ttk.LabelFrame(parent, text="[CALC] Current Calculation", padding=10)
+#         calc_frame = ttk.LabelFrame(parent, text="🧮 Current Calculation", padding=10)
 #         calc_frame.pack(pady=(0, 10), fill="both", expand=True)
 
 #         self.tree = ttk.Treeview(
@@ -197,8 +197,8 @@
 #         # Action buttons
 #         button_frame = ttk.Frame(calc_frame)
 #         button_frame.pack(pady=(10, 0), fill="x")
-#         ttk.Button(button_frame, text="[SAVE] Save to History", command=self.save_csv).pack(side="left", padx=(0, 5))
-#         ttk.Button(button_frame, text="[REFRESH] Refresh Dashboard", command=self.refresh_dashboard).pack(side="left")
+#         ttk.Button(button_frame, text="💾 Save to History", command=self.save_csv).pack(side="left", padx=(0, 5))
+#         ttk.Button(button_frame, text="🔄 Refresh Dashboard", command=self.refresh_dashboard).pack(side="left")
 
 #     def _setup_right_panel(self, parent):
 #         """Setup enhanced right panel with market data features"""
@@ -207,7 +207,7 @@
 
 #         # Growth Charts Tab
 #         growth_tab = ttk.Frame(self.tab_notebook)
-#         self.tab_notebook.add(growth_tab, text="[CHART] Growth Charts")
+#         self.tab_notebook.add(growth_tab, text="📈 Growth Charts")
 
 #         # View mode selector (auto-updates charts)
 #         control_frame = ttk.Frame(growth_tab)
@@ -228,26 +228,26 @@
 
 #         # Portfolio Analysis Tab (Enhanced)
 #         analysis_tab = ttk.Frame(self.tab_notebook)
-#         self.tab_notebook.add(analysis_tab, text="[DATA] Portfolio Analysis")
+#         self.tab_notebook.add(analysis_tab, text="📊 Portfolio Analysis")
         
 #         analysis_buttons = ttk.Frame(analysis_tab)
 #         analysis_buttons.pack(pady=20)
         
-#         ttk.Button(analysis_buttons, text="[DATA] Allocation Pie Chart", 
+#         ttk.Button(analysis_buttons, text="📊 Allocation Pie Chart", 
 #                   command=self.show_allocation_chart).pack(side="left", padx=5)
-#         ttk.Button(analysis_buttons, text="[CHART] Yield Comparison (Live)", 
+#         ttk.Button(analysis_buttons, text="📈 Yield Comparison (Live)", 
 #                   command=self.show_yield_chart).pack(side="left", padx=5)
-#         ttk.Button(analysis_buttons, text="[TIME] Investment Timeline", 
+#         ttk.Button(analysis_buttons, text="⏰ Investment Timeline", 
 #                   command=self.show_timeline_chart).pack(side="left", padx=5)
-#         ttk.Button(analysis_buttons, text="[MONEY] Portfolio Performance", 
+#         ttk.Button(analysis_buttons, text="💰 Portfolio Performance", 
 #                   command=self.show_performance_chart).pack(side="left", padx=5)
 
 #         # Market Data Tab (New)
 #         market_tab = ttk.Frame(self.tab_notebook)
-#         self.tab_notebook.add(market_tab, text="[WEB] Live Market Data")
+#         self.tab_notebook.add(market_tab, text="🌐 Live Market Data")
         
 #         # Market data display
-#         market_info_frame = ttk.LabelFrame(market_tab, text="[DATA] Current Stock Prices", padding=10)
+#         market_info_frame = ttk.LabelFrame(market_tab, text="📊 Current Stock Prices", padding=10)
 #         market_info_frame.pack(pady=20, padx=20, fill="both", expand=True)
         
 #         self.market_tree = ttk.Treeview(
@@ -273,14 +273,14 @@
         
 #         market_button_frame = ttk.Frame(market_info_frame)
 #         market_button_frame.pack(fill="x")
-#         ttk.Button(market_button_frame, text="[REFRESH] Refresh Market Data", 
+#         ttk.Button(market_button_frame, text="🔄 Refresh Market Data", 
 #                   command=self.refresh_market_data).pack(side="left", padx=5)
-#         ttk.Button(market_button_frame, text="[LIST] Export Market Data", 
+#         ttk.Button(market_button_frame, text="📋 Export Market Data", 
 #                   command=self.export_market_data).pack(side="left", padx=5)
 
 #         # Strategy Comparison Tab
 #         comparison_tab = ttk.Frame(self.tab_notebook)
-#         self.tab_notebook.add(comparison_tab, text="[TARGET] Strategy Comparison")
+#         self.tab_notebook.add(comparison_tab, text="🎯 Strategy Comparison")
 #         ttk.Button(comparison_tab, text="Open Strategy Comparison Chart", 
 #                   command=self.show_comparison_chart).pack(pady=20)
 
@@ -292,10 +292,10 @@
 #         if self.use_live_data.get():
 #             messagebox.showinfo(
 #                 "Live Data Enabled", 
-#                 "[OK] Yahoo Finance live data enabled!\n\n"
+#                 "✅ Yahoo Finance live data enabled!\n\n"
 #                 "✨ Unlimited requests - no rate limits!\n"
-#                 "[DATA] Real-time stock prices and dividends\n"
-#                 "[LAUNCH] Fast and reliable data\n\n"
+#                 "📊 Real-time stock prices and dividends\n"
+#                 "🚀 Fast and reliable data\n\n"
 #                 "Next calculation will use live market data."
 #             )
 #         else:
@@ -306,7 +306,7 @@
 #         """This method is no longer needed with Yahoo Finance"""
 #         messagebox.showinfo("Info", 
 #                           "Yahoo Finance doesn't require an API key!\n"
-#                           "Enjoy unlimited real-time data! [SUCCESS]")
+#                           "Enjoy unlimited real-time data! 🎉")
 
 #     def calculate(self):
 #         """Enhanced calculation with optional live market data"""
@@ -412,7 +412,7 @@
 #         if calc_result.get("is_live_data"):
 #             tag = "live_data"
         
-#         live_indicator = "[OK]" if calc_result.get("is_live_data") else "[ERROR]"
+#         live_indicator = "✅" if calc_result.get("is_live_data") else "❌"
         
 #         self.tree.insert("", "end", values=(
 #             calc_result["ticker"],
@@ -707,7 +707,7 @@
 #                     ))
 
 #                 fig.update_layout(
-#                     title="[DATA] Strategy Comparison: Portfolio Value",
+#                     title="📊 Strategy Comparison: Portfolio Value",
 #                     xaxis_title="Year (Relative)",
 #                     yaxis=dict(title="(unused)", visible=False),
 #                     yaxis2=dict(title="Portfolio Value ($)", overlaying="y", side="right"),
@@ -753,7 +753,7 @@
 
 #             # Create total overview tab
 #             tab_total = ttk.Frame(self.stock_tabs)
-#             self.stock_tabs.add(tab_total, text="[DATA] All Stocks + Total")
+#             self.stock_tabs.add(tab_total, text="📊 All Stocks + Total")
 
 #             fig_total = ChartGenerator.create_growth_chart(pivoted_cumsum, mode, y_label)
 #             ttk.Button(
@@ -908,7 +908,7 @@ class DividendApp:
     def _setup_left_panel(self, parent):
         """Setup enhanced left panel with market data controls"""
         # Market Data Status section
-        status_frame = ttk.LabelFrame(parent, text="[LAUNCH] Market Data Status", padding=10)
+        status_frame = ttk.LabelFrame(parent, text="🚀 Market Data Status", padding=10)
         status_frame.pack(pady=(0, 10), fill="x")
         
         # Status indicator
@@ -924,7 +924,7 @@ class DividendApp:
                        command=self.on_live_data_toggle).pack(side="left")
 
         # Input section
-        input_frame = ttk.LabelFrame(parent, text="[MONEY] Investment Calculator", padding=10)
+        input_frame = ttk.LabelFrame(parent, text="💰 Investment Calculator", padding=10)
         input_frame.pack(pady=(0, 10), fill="x")
         
         entry_frame = ttk.Frame(input_frame)
@@ -937,7 +937,7 @@ class DividendApp:
         ttk.Button(entry_frame, text="Calculate", command=self.calculate).pack(side="left", padx=5)
         
         # Portfolio stats section (enhanced)
-        stats_frame = ttk.LabelFrame(parent, text="[DATA] Portfolio Statistics", padding=10)
+        stats_frame = ttk.LabelFrame(parent, text="📊 Portfolio Statistics", padding=10)
         stats_frame.pack(pady=(0, 10), fill="x")
         
         self.stats_labels = {}
@@ -959,7 +959,7 @@ class DividendApp:
             self.stats_labels[key].pack(side="right")
 
         # Current calculation results
-        calc_frame = ttk.LabelFrame(parent, text="[CALC] Current Calculation", padding=10)
+        calc_frame = ttk.LabelFrame(parent, text="🧮 Current Calculation", padding=10)
         calc_frame.pack(pady=(0, 10), fill="both", expand=True)
 
         self.tree = ttk.Treeview(
@@ -990,8 +990,8 @@ class DividendApp:
         # Action buttons
         button_frame = ttk.Frame(calc_frame)
         button_frame.pack(pady=(10, 0), fill="x")
-        ttk.Button(button_frame, text="[SAVE] Save to History", command=self.save_csv).pack(side="left", padx=(0, 5))
-        ttk.Button(button_frame, text="[REFRESH] Refresh Dashboard", command=self.refresh_dashboard).pack(side="left")
+        ttk.Button(button_frame, text="💾 Save to History", command=self.save_csv).pack(side="left", padx=(0, 5))
+        ttk.Button(button_frame, text="🔄 Refresh Dashboard", command=self.refresh_dashboard).pack(side="left")
 
     def _setup_right_panel(self, parent):
         """Setup enhanced right panel with market data features"""
@@ -1000,7 +1000,7 @@ class DividendApp:
 
         # Growth Charts Tab
         growth_tab = ttk.Frame(self.tab_notebook)
-        self.tab_notebook.add(growth_tab, text="[CHART] Growth Charts")
+        self.tab_notebook.add(growth_tab, text="📈 Growth Charts")
 
         # View mode selector (auto-updates charts)
         control_frame = ttk.Frame(growth_tab)
@@ -1021,26 +1021,26 @@ class DividendApp:
 
         # Portfolio Analysis Tab (Enhanced)
         analysis_tab = ttk.Frame(self.tab_notebook)
-        self.tab_notebook.add(analysis_tab, text="[DATA] Portfolio Analysis")
+        self.tab_notebook.add(analysis_tab, text="📊 Portfolio Analysis")
         
         analysis_buttons = ttk.Frame(analysis_tab)
         analysis_buttons.pack(pady=20)
         
-        ttk.Button(analysis_buttons, text="[DATA] Allocation Pie Chart", 
+        ttk.Button(analysis_buttons, text="📊 Allocation Pie Chart", 
                   command=self.show_allocation_chart).pack(side="left", padx=5)
-        ttk.Button(analysis_buttons, text="[CHART] Yield Comparison (Live)", 
+        ttk.Button(analysis_buttons, text="📈 Yield Comparison (Live)", 
                   command=self.show_yield_chart).pack(side="left", padx=5)
-        ttk.Button(analysis_buttons, text="[TIME] Investment Timeline", 
+        ttk.Button(analysis_buttons, text="⏰ Investment Timeline", 
                   command=self.show_timeline_chart).pack(side="left", padx=5)
-        ttk.Button(analysis_buttons, text="[MONEY] Portfolio Performance", 
+        ttk.Button(analysis_buttons, text="💰 Portfolio Performance", 
                   command=self.show_performance_chart).pack(side="left", padx=5)
 
         # Market Data Tab (New)
         market_tab = ttk.Frame(self.tab_notebook)
-        self.tab_notebook.add(market_tab, text="[WEB] Live Market Data")
+        self.tab_notebook.add(market_tab, text="🌐 Live Market Data")
         
         # Market data display
-        market_info_frame = ttk.LabelFrame(market_tab, text="[DATA] Current Stock Prices", padding=10)
+        market_info_frame = ttk.LabelFrame(market_tab, text="📊 Current Stock Prices", padding=10)
         market_info_frame.pack(pady=20, padx=20, fill="both", expand=True)
         
         self.market_tree = ttk.Treeview(
@@ -1066,14 +1066,14 @@ class DividendApp:
         
         market_button_frame = ttk.Frame(market_info_frame)
         market_button_frame.pack(fill="x")
-        ttk.Button(market_button_frame, text="[REFRESH] Refresh Market Data", 
+        ttk.Button(market_button_frame, text="🔄 Refresh Market Data", 
                   command=self.refresh_market_data).pack(side="left", padx=5)
-        ttk.Button(market_button_frame, text="[LIST] Export Market Data", 
+        ttk.Button(market_button_frame, text="📋 Export Market Data", 
                   command=self.export_market_data).pack(side="left", padx=5)
 
         # Strategy Comparison Tab
         comparison_tab = ttk.Frame(self.tab_notebook)
-        self.tab_notebook.add(comparison_tab, text="[TARGET] Strategy Comparison")
+        self.tab_notebook.add(comparison_tab, text="🎯 Strategy Comparison")
         ttk.Button(comparison_tab, text="Open Strategy Comparison Chart", 
                   command=self.show_comparison_chart).pack(pady=20)
 
@@ -1085,10 +1085,10 @@ class DividendApp:
         if self.use_live_data.get():
             messagebox.showinfo(
                 "Live Data Enabled", 
-                "[OK] Yahoo Finance live data enabled!\n\n"
+                "✅ Yahoo Finance live data enabled!\n\n"
                 "✨ Unlimited requests - no rate limits!\n"
-                "[DATA] Real-time stock prices and dividends\n"
-                "[LAUNCH] Fast and reliable data\n\n"
+                "📊 Real-time stock prices and dividends\n"
+                "🚀 Fast and reliable data\n\n"
                 "Next calculation will use live market data."
             )
         else:
@@ -1099,7 +1099,7 @@ class DividendApp:
         """This method is no longer needed with Yahoo Finance"""
         messagebox.showinfo("Info", 
                           "Yahoo Finance doesn't require an API key!\n"
-                          "Enjoy unlimited real-time data! [SUCCESS]")
+                          "Enjoy unlimited real-time data! 🎉")
 
     def calculate(self):
         """Enhanced calculation with optional live market data"""
@@ -1205,7 +1205,7 @@ class DividendApp:
         if calc_result.get("is_live_data"):
             tag = "live_data"
         
-        live_indicator = "[OK]" if calc_result.get("is_live_data") else "[ERROR]"
+        live_indicator = "✅" if calc_result.get("is_live_data") else "❌"
         
         self.tree.insert("", "end", values=(
             calc_result["ticker"],
@@ -1500,7 +1500,7 @@ class DividendApp:
                     ))
 
                 fig.update_layout(
-                    title="[DATA] Strategy Comparison: Portfolio Value",
+                    title="📊 Strategy Comparison: Portfolio Value",
                     xaxis_title="Year (Relative)",
                     yaxis=dict(title="(unused)", visible=False),
                     yaxis2=dict(title="Portfolio Value ($)", overlaying="y", side="right"),
@@ -1546,7 +1546,7 @@ class DividendApp:
 
             # Create total overview tab
             tab_total = ttk.Frame(self.stock_tabs)
-            self.stock_tabs.add(tab_total, text="[DATA] All Stocks + Total")
+            self.stock_tabs.add(tab_total, text="📊 All Stocks + Total")
 
             fig_total = ChartGenerator.create_growth_chart(pivoted_cumsum, mode, y_label)
             ttk.Button(
