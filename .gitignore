@@ -5,3 +5,61 @@ venv/
 /dividend_gui.spec
 /icon.ico
 /dist
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# API Keys and Config
+config.py
+.env
+
+# Data Files
+market_data_cache.json
+dividend_history.csv
+market_data_export.csv
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# PyInstaller
+*.manifest
+*.spec
+
+exe_generator.txt
+quick_fix.py
+build_executable.py
+requirements.txt
